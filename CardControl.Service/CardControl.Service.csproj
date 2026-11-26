@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CardControl.Data\CardControl.Data.csproj" />
+    <ProjectReference Include="..\CardControl.Interface\CardControl.Interface.csproj" />
+    <ProjectReference Include="..\CardControl.Model\CardControl.Model.csproj" />
+  </ItemGroup>
+
+</Project>

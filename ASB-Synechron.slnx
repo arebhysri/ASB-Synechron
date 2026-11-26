@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="CardControl.Api/CardControl.Api.csproj" />
+    <Project Path="CardControl.Data/CardControl.Data.csproj" />
+    <Project Path="CardControl.Interface/CardControl.Interface.csproj" />
+    <Project Path="CardControl.Model/CardControl.Model.csproj" />
+    <Project Path="CardControl.Repository/CardControl.Repository.csproj" />
+    <Project Path="CardControl.Service/CardControl.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="CardControl.IntegrationTest/CardControl.IntegrationTest.csproj" />
+    <Project Path="CardControl.Test/CardControl.UnitTest.csproj" />
+  </Folder>
+</Solution>
