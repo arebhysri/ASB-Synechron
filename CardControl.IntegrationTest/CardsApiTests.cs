@@ -156,6 +156,16 @@ namespace CardControl.IntegrationTest
             Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
         }
 
+        [Fact]
+        public async Task Lock_CorporateIdTooLong_Returns400ValidationProblem()
+        {
+            // [MaxLength(64)] on CorporateId: rejected by model validation before any processing
+            var response = await SendAsync("lock", Pan, new string('C', 65));
+
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
+        }
+
         // ---------- Entitlement (403 / 404) ----------
 
         [Fact]

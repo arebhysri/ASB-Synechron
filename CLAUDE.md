@@ -4,12 +4,13 @@ How Claude (or any AI assistant) must work in this repository. Follow it for eve
 
 ## 0. Authorship and AI use
 
-- I designed and built the solution myself in Visual Studio: layered structure, project references, NuGet
-  packages, configuration and all API code.
-- I used Claude as a pair-programming assistant: to understand the starter contracts, discuss design choices
-  (e.g. 404 vs 403 for cards of other corporates, when retries are safe), get code suggestions per step, and
-  review my work after each step.
-- I typed, built, ran and debugged everything myself, fixed the bugs found in review, and tested the API end to
+- I designed the solution and wrote the API myself in Visual Studio, one step at a time (see the commit
+  history): layered structure, project references, NuGet packages, configuration and API code.
+- I used Claude mostly like documentation and a reviewer: to look up how the starter contracts, JWE and JWT
+  validation work, to compare design options (e.g. 404 vs 403 for cards of other corporates, when retries are
+  safe), and to check my code after each step.
+- For some steps I used its code suggestions as a reference, and typed and adapted them myself.
+- I typed, built, ran and debugged the API myself, fixed the bugs found in review, and tested the API end to
   end (lock/unlock, audit trail, 401/403/400/409).
 - I used AI (Claude) to write the unit and integration tests and the Swagger setup, following the testing rules in section 8. I
   reviewed every test, ran them and made sure they pass.

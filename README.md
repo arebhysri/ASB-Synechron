@@ -139,7 +139,7 @@ Projects are in the repo root. `src` and `tests` are solution folders in `ASB-Sy
 | `CardControl.Model` | Requests, responses, enums, `CardControlException`, error codes |
 | `CardControl.Data` | Options classes bound from configuration |
 | `CardControl.Test` | Unit tests (43) |
-| `CardControl.IntegrationTest` | Integration tests through the real HTTP pipeline (16) |
+| `CardControl.IntegrationTest` | Integration tests through the real HTTP pipeline (17) |
 
 Dependencies point inwards: Api → Service / Repository → Interface → Model / Data. The starter kit in `starter/` is unchanged.
 
@@ -170,12 +170,13 @@ Dependencies point inwards: Api → Service / Repository → Interface → Model
 
 ## Time spent
 
-About 8 hours in total, over two sessions.
+About 8.5 hours in total, over two days: about 7 hours building the API, unit/integration tests and Swagger, and about 1.5 hours testing end to end, reviewing and writing the README.
 
 ## How I used AI tools
 
-- I designed and built the solution myself in Visual Studio: layered structure, project references, NuGet packages, configuration and all API code.
-- I used Claude as a pair-programming assistant: to understand the starter contracts, discuss design choices (e.g. 404 vs 403 for cards of other corporates, when retries are safe), get code suggestions per step, and review my work after each step.
-- I typed, built, ran and debugged everything myself, fixed the bugs found in review, and tested the API end to end (lock/unlock, audit trail, 401/403/400/409).
-- I used AI (Claude) to write the unit and integration tests and the Swagger setup. I reviewed every change, ran the tests and made sure they pass.
+- I designed the solution and wrote the API myself in Visual Studio, one step at a time (see the commit history): layered structure, project references, NuGet packages, configuration and API code.
+- I used Claude mostly like documentation and a reviewer: to look up how the starter contracts, JWE and JWT validation work, to compare design options (e.g. 404 vs 403 for cards of other corporates, when retries are safe), and to check my code after each step.
+- For some steps I used its code suggestions as a reference, and typed and adapted them myself.
+- I typed, built, ran and debugged the API myself, fixed the bugs found in review, and tested the API end to end (lock/unlock, audit trail, 401/403/400/409).
+- Later I used Claude to write the clean-up fixes after review, the unit and integration tests and the Swagger setup. I reviewed every change, ran the tests and made sure they pass.
 - Rules for working with Claude in this repo are in [CLAUDE.md](CLAUDE.md): plan first, I approve, I review and commit.
