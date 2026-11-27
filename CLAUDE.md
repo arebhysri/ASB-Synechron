@@ -11,7 +11,7 @@ How Claude (or any AI assistant) must work in this repository. Follow it for eve
   review my work after each step.
 - I typed, built, ran and debugged everything myself, fixed the bugs found in review, and tested the API end to
   end (lock/unlock, audit trail, 401/403/400/409).
-- I used AI (Claude) to write the unit and integration tests, following the testing rules in section 8. I
+- I used AI (Claude) to write the unit and integration tests and the Swagger setup, following the testing rules in section 8. I
   reviewed every test, ran them and made sure they pass.
 - From this file onwards Claude may also write clean-up fixes, but only under the rules below
   (plan first, I approve, I review and commit).
@@ -37,6 +37,8 @@ Run from the repo root (folder with `ASB-Synechron.slnx`):
 | API | `dotnet run --project CardControl.Api --launch-profile http` → `http://localhost:5045` |
 
 Endpoints: `POST /api/cards/lock`, `POST /api/cards/unlock`.
+
+Swagger UI: `http://localhost:5045/swagger` (Development only; OpenAPI document at `/openapi/v1.json`).
 
 ## 2. Permission rule (mandatory)
 
@@ -179,7 +181,6 @@ Then wait for approval.
 ## 10. Known tech debt (do not fix unless asked)
 
 - No retries/timeouts beyond `HttpClient.Timeout` (Polly resilience not added).
-- Transport failures (stub down, timeout) currently surface as 500 instead of 503/504.
 - Single decryption key; no key ring / rotation.
 - Private key read from a PEM file; production would use Key Vault/HSM.
 - `RequireHttpsMetadata` is off in Development only because the mock IdP is plain HTTP.

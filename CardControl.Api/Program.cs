@@ -1,4 +1,5 @@
 ﻿using CardControl.Api.Errors;
+using CardControl.Api.OpenApi;
 using CardControl.Data.Options;
 using CardControl.Interface;
 using CardControl.Repository.Downstream;
@@ -70,17 +71,14 @@ builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<CardControlExceptionHandler>();
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddCardControlOpenApi();
 
 var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseStatusCodePages();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseCardControlOpenApi(); // /openapi/v1.json + /swagger, Development only
 
 app.UseAuthentication();
 app.UseAuthorization();
