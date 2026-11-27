@@ -156,6 +156,7 @@ Dependencies point inwards: Api → Service / Repository → Interface → Model
 - **Channel**: `partner-app` is sent to the card platform as the channel for the audit trail.
 - **No retries.** A lock/unlock isn't safe to retry blindly: a retry after a timeout could land on a card whose state already changed, and adds a second audit entry.
 - **Swagger UI and the OpenAPI document are Development only.**
+- **TLS**: locally the API runs on plain HTTP, like the starter kit. In AKS, TLS is terminated at the ingress, and HTTPS redirection/HSTS would be enabled.
 
 ## Shortcuts and what I'd do with more time
 
