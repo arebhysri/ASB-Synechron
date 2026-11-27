@@ -1,33 +1,43 @@
-﻿using CardControl.Data.Options;
+﻿using System.Net;
+using System.Net.Http.Json;
+using System.Text.Json;
+using CardControl.Data.Options;
 using CardControl.Interface;
 using CardControl.Model.Downstream;
 using CardControl.Model.Errors;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Text;
 
 namespace CardControl.Repository.Downstream
 {
     public sealed class CardPlatformClient(HttpClient httpClient, IOptions<DownstreamOptions> options) : ICardPlatformClient
     {
+        private const string ServiceName = "card platform";
+
         public async Task<CardDetails> GetCardAsync(string cardToken, CancellationToken cancellationToken)
         {
-            using var response = await httpClient.GetAsync($"cards/{Uri.EscapeDataString(cardToken)}", cancellationToken);
+            using var response = await DownstreamTransport.SendAsync(
+                ct => httpClient.GetAsync($"cards/{Uri.EscapeDataString(cardToken)}", ct),
+                ServiceName,
+                cancellationToken);
+
             return await ReadCardAsync(response, cancellationToken);
         }
 
-        public Task<CardDetails> LockAsync(string cardToken, string initiatingUser, CancellationToken cancellationToken) => ChangeAsync(cardToken, "lock", initiatingUser, cancellationToken);
-        
+        public Task<CardDetails> LockAsync(string cardToken, string initiatingUser, CancellationToken cancellationToken)
+            => ChangeAsync(cardToken, "lock", initiatingUser, cancellationToken);
 
         public Task<CardDetails> UnlockAsync(string cardToken, string initiatingUser, CancellationToken cancellationToken)
-        => ChangeAsync(cardToken, "unlock", initiatingUser, cancellationToken);
+            => ChangeAsync(cardToken, "unlock", initiatingUser, cancellationToken);
 
         private async Task<CardDetails> ChangeAsync(string cardToken, string action, string initiatingUser, CancellationToken cancellationToken)
         {
             var body = new CardChangeRequest(initiatingUser, options.Value.Channel);
-            using var response = await httpClient.PostAsJsonAsync($"cards/{Uri.EscapeDataString(cardToken)}/{action}", body, cancellationToken);
+
+            using var response = await DownstreamTransport.SendAsync(
+                ct => httpClient.PostAsJsonAsync($"cards/{Uri.EscapeDataString(cardToken)}/{action}", body, ct),
+                ServiceName,
+                cancellationToken);
+
             return await ReadCardAsync(response, cancellationToken);
         }
 
@@ -35,7 +45,9 @@ namespace CardControl.Repository.Downstream
         {
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<CardDetails>(cancellationToken) ?? throw new CardControlException(502, "CardPlatformFailed", "Card platform returned an empty response.");
+                return await response.Content.ReadFromJsonAsync<CardDetails>(cancellationToken)
+                    ?? throw new CardControlException(HttpStatusCode.BadGateway, ErrorCodes.CardPlatformFailed,
+                        "Card platform returned an empty response.");
             }
 
             DownstreamProblem? problem = null;
@@ -43,17 +55,20 @@ namespace CardControl.Repository.Downstream
             {
                 problem = await response.Content.ReadFromJsonAsync<DownstreamProblem>(cancellationToken);
             }
-            catch { }
+            catch (JsonException)
+            {
+                // Error body is not Problem Details JSON: fall through to the generic 502 below.
+            }
+
             throw problem?.Code switch
             {
-                "CardNotFound" => new CardControlException(404, "CardNotFound", "Card not found."),
-                "CardAlreadyLocked" => new CardControlException(409, "CardAlreadyLocked", "The card is already locked."),
-                "CardNotLocked" => new CardControlException(409, "CardNotLocked", "The card is not locked."),
-                "CardCancelled" => new CardControlException(422, "CardCancelled", "The card is cancelled."),
-                "ServiceUnavailable" => new CardControlException(503, "CardPlatformUnavailable", "Card platform is temporarily unavailable."),
-                _ => new CardControlException(502, "CardPlatformFailed", "Card platform request failed."),
+                ErrorCodes.CardNotFound => new CardControlException(HttpStatusCode.NotFound, ErrorCodes.CardNotFound, "Card not found."),
+                ErrorCodes.CardAlreadyLocked => new CardControlException(HttpStatusCode.Conflict, ErrorCodes.CardAlreadyLocked, "The card is already locked."),
+                ErrorCodes.CardNotLocked => new CardControlException(HttpStatusCode.Conflict, ErrorCodes.CardNotLocked, "The card is not locked."),
+                ErrorCodes.CardCancelled => new CardControlException(HttpStatusCode.UnprocessableEntity, ErrorCodes.CardCancelled, "The card is cancelled."),
+                "ServiceUnavailable" => new CardControlException(HttpStatusCode.ServiceUnavailable, ErrorCodes.CardPlatformUnavailable, "Card platform is temporarily unavailable."),
+                _ => new CardControlException(HttpStatusCode.BadGateway, ErrorCodes.CardPlatformFailed, "Card platform request failed."),
             };
-
         }
     }
 }

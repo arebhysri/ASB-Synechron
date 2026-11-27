@@ -1,6 +1,45 @@
+# Card Control API sample requests (Visual Studio: click "Send request").
+# 1. Start the starter stubs and the API (see CLAUDE.md / README).
+# 2. Get a token and an encrypted PAN in PowerShell from the starter folder:
+#      $TOKEN = (Invoke-RestMethod -Method Post -Uri http://localhost:5090/oauth2/token -Body @{
+#        grant_type='client_credentials'; client_id='partner-app'
+#        client_secret='dev-only-partner-app-secret'; scope='api://card-control/.default' }).access_token
+#      dotnet run tools/jwe-tool.cs -- encrypt --key .dev-keys/bank-dev-1.public.pem 4111111111111111
+# 3. Paste them into the two variables below.
+
 @CardControl.Api_HostAddress = http://localhost:5045
+@token = PASTE_ACCESS_TOKEN
+@encryptedPan = PASTE_JWE
 
-GET {{CardControl.Api_HostAddress}}/weatherforecast/
-Accept: application/json
+### Lock a card
+POST {{CardControl.Api_HostAddress}}/api/cards/lock
+Authorization: Bearer {{token}}
+X-Initiating-User: jane.smith@acme.example
+Content-Type: application/json
 
-###
+{
+  "encryptedPan": "{{encryptedPan}}",
+  "corporateId": "CORP-1001"
+}
+
+### Unlock a card
+POST {{CardControl.Api_HostAddress}}/api/cards/unlock
+Authorization: Bearer {{token}}
+X-Initiating-User: jane.smith@acme.example
+Content-Type: application/json
+
+{
+  "encryptedPan": "{{encryptedPan}}",
+  "corporateId": "CORP-1001"
+}
+
+### Corporate not enabled (expect 403 CorporateNotEnabled)
+POST {{CardControl.Api_HostAddress}}/api/cards/lock
+Authorization: Bearer {{token}}
+X-Initiating-User: jane.smith@acme.example
+Content-Type: application/json
+
+{
+  "encryptedPan": "{{encryptedPan}}",
+  "corporateId": "CORP-3003"
+}

@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Net;
 
 namespace CardControl.Model.Errors
 {
+    /// <summary>An expected failure, turned into Problem Details by the global exception handler.</summary>
     public sealed class CardControlException : Exception
     {
-        public CardControlException(int stausCode, string code, string message) : base(message)
+        public CardControlException(HttpStatusCode statusCode, string code, string message)
+            : base(message)
         {
-            StatusCode = stausCode;
+            StatusCode = (int)statusCode;
             Code = code;
         }
 

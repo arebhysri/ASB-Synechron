@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace CardControl.Model.Requests
 {
@@ -9,6 +6,7 @@ namespace CardControl.Model.Requests
     {
         [Required]
         public string EncryptedPan { get; init; } = string.Empty;
+
         [Required]
         public string CorporateId { get; init; } = string.Empty;
     }

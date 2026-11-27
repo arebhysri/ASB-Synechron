@@ -1,7 +1,4 @@
 ﻿using CardControl.Model.Enums;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CardControl.Model.Responses
 {
